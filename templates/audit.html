@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Журнал событий — ТОГУ{% endblock %}
+
+{% block content %}
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>ЖУРНАЛ СОБЫТИЙ</h1>
+      <div class="subtitle">Последние 200 записей · доступно ролям «суперадмин» и «наблюдатель»</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Время</th>
+          <th>Пользователь</th>
+          <th>Действие</th>
+          <th>Сущность</th>
+          <th>IP</th>
+          <th>Детали</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in events %}
+        <tr>
+          <td class="text-mono text-xs">{{ e.created_at[:19] }}</td>
+          <td>{{ e.user_name or 'аноним' }}</td>
+          <td><span class="badge badge-primary">{{ e.action }}</span></td>
+          <td class="text-sm">{{ e.entity_type or '—' }}{% if e.entity_id %} #{{ e.entity_id }}{% endif %}</td>
+          <td class="text-mono text-xs">{{ e.ip or '—' }}</td>
+          <td class="text-xs text-muted">{{ e.details or '' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="empty">Записей нет</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+{% endblock %}

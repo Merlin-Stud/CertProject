@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block title %}{{ event.name }} — ТОГУ{% endblock %}
+
+{% block content %}
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>{{ event.name }}</h1>
+      <div class="subtitle">
+        {{ event.organizer or '—' }} ·
+        {{ event.date_start or '—' }}{% if event.date_end %} — {{ event.date_end }}{% endif %} ·
+        <span class="badge badge-muted">{{ event.event_type or '—' }}</span>
+      </div>
+    </div>
+    <a href="{{ url_for('events_list') }}" class="btn btn-ghost">← К списку</a>
+  </div>
+
+  {% if event.description %}
+  <div class="card mb-16" style="margin-bottom:16px;">
+    <div>{{ event.description }}</div>
+  </div>
+  {% endif %}
+
+  <!-- ИМПОРТ И ДОБАВЛЕНИЕ -->
+  {% if current_user.role in ['superadmin', 'admin'] %}
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header">
+      <h2>УЧАСТНИКИ</h2>
+      <div class="flex gap-8">
+        <button onclick="toggleBlock('add-form')" class="btn btn-secondary btn-sm">+ Добавить</button>
+        <button onclick="toggleBlock('import-form')" class="btn btn-secondary btn-sm">⤓ Импорт CSV</button>
+      </div>
+    </div>
+
+    <div id="add-form" style="display:none;">
+      <form method="post" action="{{ url_for('recipient_add', event_id=event.id) }}">
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label>ФИО *</label>
+            <input type="text" name="full_name" required>
+          </div>
+          <div class="form-row">
+            <label>E-mail</label>
+            <input type="email" name="email">
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label>Статус</label>
+            <select name="status">
+              <option value="участник">Участник</option>
+              <option value="призер">Призёр</option>
+              <option value="победитель">Победитель</option>
+              <option value="спикер">Спикер</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Достижение</label>
+            <input type="text" name="achievement" placeholder="1 место, диплом 2 степени и т.д.">
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label>Часы (для волонтёров)</label>
+            <input type="number" name="hours">
+          </div>
+          <div class="form-row">
+            <label>Должность</label>
+            <input type="text" name="position">
+          </div>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" name="consent_pd" id="cpd1" checked>
+          <label for="cpd1" style="margin:0;text-transform:none;">Согласие на обработку персональных данных получено (152-ФЗ)</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </form>
+    </div>
+
+    <div id="import-form" style="display:none;">
+      <form method="post" action="{{ url_for('event_import', event_id=event.id) }}" enctype="multipart/form-data">
+        <div class="form-row">
+          <label>CSV-файл</label>
+          <input type="file" name="csv_file" accept=".csv" required>
+          <div class="hint">
+            Колонки: <code>full_name,email,status,achievement,hours,position,consent_pd</code><br>
+            Кодировка UTF-8 (с BOM или без). Первая строка — заголовок.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Импортировать</button>
+      </form>
+    </div>
+
+    {% if recipients %}
+    <form method="post" action="{{ url_for('issue_documents', event_id=event.id) }}" id="issue-form" style="margin-top:16px;">
+      <div class="table-wrap" style="box-shadow:none;">
+        <table class="data">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="check-all"></th>
+              <th>ФИО</th>
+              <th>E-mail</th>
+              <th>Статус</th>
+              <th>Достижение</th>
+              <th>Часы</th>
+              <th>152-ФЗ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in recipients %}
+            <tr>
+              <td><input type="checkbox" name="recipient_ids" value="{{ r.id }}" class="row-check"></td>
+              <td><strong>{{ r.full_name }}</strong></td>
+              <td class="text-sm">{{ r.email or '—' }}</td>
+              <td><span class="badge badge-muted">{{ r.status or '—' }}</span></td>
+              <td class="text-sm">{{ r.achievement or '—' }}</td>
+              <td class="text-sm">{{ r.hours or '—' }}</td>
+              <td>
+                {% if r.consent_pd %}
+                  <span class="badge badge-success">✓</span>
+                {% else %}
+                  <span class="badge badge-warning">нет</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="margin-top:16px;background:#fdf5f7;border:1px solid var(--togu-primary);">
+        <h3 style="font-family:var(--font-display);color:var(--togu-primary);margin-bottom:12px;">
+          МАСТЕР ВЫПУСКА ДОКУМЕНТОВ
+        </h3>
+        <div class="form-row">
+          <label>Выберите шаблон документа</label>
+          <select name="template_id" required>
+            <option value="">— Выберите шаблон —</option>
+            {% for t in templates %}
+              <option value="{{ t.id }}">
+                {{ t.name }} ({{ DOC_TYPES.get(t.doc_type, t.doc_type) }}){% if t.background_file %} · свой фон{% endif %}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="hint">Шаблоны соответствуют брендбуку ТОГУ или используют загруженный пользователем фон.</div>
+        </div>
+        <div class="flex gap-12">
+          <button type="submit" class="btn btn-primary">⚡ Выпуск по шаблону</button>
+          <a href="{{ url_for('issue_oneoff', event_id=event.id) }}" class="btn btn-secondary">
+            ⚡ Выпуск в свободной форме
+          </a>
+        </div>
+        <div class="hint" style="margin-top:8px;">
+          «В свободной форме» — выпустить документы с разовыми параметрами,
+          которые не попадают в каталог шаблонов.
+        </div>
+      </div>
+    </form>
+    {% else %}
+      <div class="empty">
+        <div class="empty-icon">👥</div>
+        <div>Список участников пуст</div>
+      </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- ВЫПУЩЕННЫЕ ДОКУМЕНТЫ -->
+  <div class="card">
+    <div class="card-header">
+      <h2>ВЫПУЩЕННЫЕ ДОКУМЕНТЫ ({{ documents|length }})</h2>
+    </div>
+
+    {% if documents %}
+      <div class="table-wrap" style="box-shadow:none;">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Получатель</th>
+              <th>Шаблон</th>
+              <th>Подписал</th>
+              <th>Дата</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in documents %}
+            <tr>
+              <td class="text-mono text-sm">{{ d.unique_number }}</td>
+              <td><strong>{{ d.rname }}</strong></td>
+              <td>{{ d.tname }}</td>
+              <td class="text-sm">{{ d.signed_by }}</td>
+              <td class="text-sm text-muted">{{ d.issued_at[:16] }}</td>
+              <td>
+                <a href="{{ url_for('document_preview', doc_id=d.id) }}" class="btn btn-ghost btn-sm" target="_blank">👁</a>
+                <a href="{{ url_for('document_download', doc_id=d.id) }}" class="btn btn-primary btn-sm">PDF</a>
+                <a href="{{ url_for('verify', token=d.access_token) }}" class="btn btn-secondary btn-sm" target="_blank">QR</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty">
+        <div class="empty-icon">📜</div>
+        <div>Документы ещё не выпущены</div>
+      </div>
+    {% endif %}
+  </div>
+</main>
+
+<script>
+  function toggleBlock(id) {
+    const el = document.getElementById(id);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+  const checkAll = document.getElementById('check-all');
+  if (checkAll) {
+    checkAll.addEventListener('change', e => {
+      document.querySelectorAll('.row-check').forEach(c => c.checked = e.target.checked);
+    });
+  }
+</script>
+{% endblock %}

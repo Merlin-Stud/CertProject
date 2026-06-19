@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Шаблоны — ТОГУ{% endblock %}
+
+{% block content %}
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>ШАБЛОНЫ ДОКУМЕНТОВ</h1>
+      <div class="subtitle">Стандартные шаблоны (по брендбуку) и пользовательские (со своими фонами)</div>
+    </div>
+    <a href="{{ url_for('template_new') }}" class="btn btn-primary">+ Новый шаблон</a>
+  </div>
+
+  <div class="card" style="background:#fdf5f7;border-left:4px solid var(--togu-primary);margin-bottom:24px;">
+    <strong style="color:var(--togu-primary);">📌 Возможности:</strong>
+    <div class="text-sm mt-16" style="margin-top:8px;">
+      • <strong>Стандартные шаблоны</strong> — оформление полностью генерируется по брендбуку ТОГУ<br>
+      • <strong>Свой фон (PDF/PNG)</strong> — загрузите готовый макет, платформа добавит данные получателя и QR-код<br>
+      • <strong>Выпуск в свободной форме</strong> — на странице мероприятия выберите этот режим, чтобы выпустить документы с разовыми параметрами без сохранения в каталог
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Тип</th>
+          <th>Формат</th>
+          <th>Ориентация</th>
+          <th>Цвет</th>
+          <th>Фон</th>
+          <th>Версия</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in templates %}
+        <tr>
+          <td><strong>{{ t.name }}</strong></td>
+          <td><span class="badge badge-primary">{{ DOC_TYPES.get(t.doc_type, t.doc_type) }}</span></td>
+          <td>{{ t.page_size }}</td>
+          <td>{{ 'Альбомная' if t.orientation == 'landscape' else 'Книжная' }}</td>
+          <td>
+            <span class="inst-color" style="background: {{ t.institute_color }};"></span>
+            <span class="text-mono text-xs">{{ t.institute_color }}</span>
+          </td>
+          <td>
+            {% if t.background_file %}
+              <span class="badge badge-warning">свой фон</span>
+            {% else %}
+              <span class="text-xs text-muted">стандарт</span>
+            {% endif %}
+          </td>
+          <td class="text-sm">v{{ t.version }}</td>
+          <td>
+            <a href="{{ url_for('template_edit', tpl_id=t.id) }}" class="btn btn-secondary btn-sm">Изменить</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+{% endblock %}

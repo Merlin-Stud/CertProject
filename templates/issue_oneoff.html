@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Выпуск в свободной форме — ТОГУ{% endblock %}
+
+{% set fd = form_data or {} %}
+{% set sel_ids = selected_ids or [] %}
+
+{% block content %}
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>⚡ ВЫПУСК В СВОБОДНОЙ ФОРМЕ</h1>
+      <div class="subtitle">
+        {{ event.name }} · параметры применяются только к этой партии и не сохраняются в каталог шаблонов
+      </div>
+    </div>
+    <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-ghost">← Назад</a>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+      <!-- ЛЕВАЯ КОЛОНКА: параметры -->
+      <div class="card">
+        <div class="card-header">
+          <h2>ПАРАМЕТРЫ ДОКУМЕНТА</h2>
+        </div>
+
+        <div class="form-row">
+          <label>Метка для журнала</label>
+          <input type="text" name="name" value="{{ fd.get('name') or ('Выпуск ' + event.name) }}" required>
+          <div class="hint">Используется только во внутреннем журнале; в каталог шаблонов не попадает.</div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label>Тип документа</label>
+            <select name="doc_type" required>
+              {% for code, label in DOC_TYPES.items() %}
+                <option value="{{ code }}" {% if fd.get('doc_type') == code %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Формат</label>
+            <select name="page_size">
+              <option value="A4" {% if fd.get('page_size','A4') == 'A4' %}selected{% endif %}>A4</option>
+              <option value="A5" {% if fd.get('page_size') == 'A5' %}selected{% endif %}>A5</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Ориентация</label>
+          <select name="orientation">
+            <option value="portrait" {% if fd.get('orientation','portrait') == 'portrait' %}selected{% endif %}>Книжная</option>
+            <option value="landscape" {% if fd.get('orientation') == 'landscape' %}selected{% endif %}>Альбомная</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Фирменный цвет</label>
+          {% set current_color = fd.get('institute_color', '#9B2242') %}
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            {% set palette = [
+              ('#9B2242', 'ТОГУ'),
+              ('#FFD72C', 'ИАСиД'),
+              ('#743A8E', 'ИЛМК'),
+              ('#B26694', 'ИСПТиК'),
+              ('#175296', 'ИЭУ'),
+              ('#8FAD15', 'Пед'),
+              ('#007041', 'Политех'),
+              ('#C7452A', 'ЮИ'),
+            ] %}
+            {% for color, label in palette %}
+              <label style="display:flex;align-items:center;gap:4px;padding:6px;border:2px solid {% if color == current_color %}var(--togu-primary){% else %}var(--togu-border){% endif %};border-radius:4px;cursor:pointer;font-size:11px;">
+                <input type="radio" name="institute_color" value="{{ color }}" {% if color == current_color %}checked{% endif %} style="accent-color:var(--togu-primary);">
+                <span class="inst-color" style="background:{{ color }};width:14px;height:14px;"></span>
+                <span>{{ label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="card" style="background:#fdf5f7;border:1px dashed var(--togu-primary);padding:14px;">
+          <strong style="color:var(--togu-primary);font-size:13px;">📁 СВОЙ ФОН (опционально)</strong>
+          <div class="text-xs text-muted" style="margin:6px 0;">
+            Загрузите готовый PDF или картинку — данные накладываются поверх.
+          </div>
+          <input type="file" name="background_file" accept=".pdf,.png,.jpg,.jpeg">
+          <div class="hint" style="margin-top:6px;">
+            После ошибки валидации файл придётся выбрать снова (ограничение браузера).
+          </div>
+        </div>
+
+        <div class="checkbox-row mt-16" style="margin-top:14px;">
+          <input type="checkbox" name="show_qr" id="sq" {% if fd.get('show_qr') or not fd %}checked{% endif %}>
+          <label for="sq" style="margin:0;text-transform:none;">QR-код</label>
+        </div>
+      </div>
+
+      <!-- ПРАВАЯ КОЛОНКА: получатели -->
+      <div class="card">
+        <div class="card-header">
+          <h2>ВЫБЕРИТЕ ПОЛУЧАТЕЛЕЙ</h2>
+          <label style="font-size:12px;font-weight:normal;text-transform:none;">
+            <input type="checkbox" id="check-all"> отметить всех
+          </label>
+        </div>
+
+        {% if recipients %}
+          <div style="max-height:480px;overflow-y:auto;">
+            {% for r in recipients %}
+              {% set is_selected = (r.id|string) in sel_ids %}
+              <label style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid var(--togu-border);cursor:pointer;">
+                <input type="checkbox" name="recipient_ids" value="{{ r.id }}" class="row-check" {% if is_selected %}checked{% endif %} style="accent-color:var(--togu-primary);">
+                <div style="flex:1;">
+                  <div style="font-weight:600;font-size:14px;">{{ r.full_name }}</div>
+                  <div class="text-xs text-muted">
+                    {{ r.email or '—' }} ·
+                    <span class="badge badge-muted">{{ r.status or '—' }}</span>
+                    {% if r.achievement %} · {{ r.achievement }}{% endif %}
+                  </div>
+                </div>
+              </label>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty">
+            <div class="empty-icon">👥</div>
+            <div>Сначала добавьте участников</div>
+            <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-primary mt-16" style="margin-top:14px;">К списку мероприятия</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if recipients %}
+    <div class="card" style="margin-top:20px;background:var(--togu-primary);color:white;text-align:center;">
+      <h3 style="font-family:var(--font-display);margin-bottom:10px;color:white;">
+        ВЫПУСК В СВОБОДНОЙ ФОРМЕ
+      </h3>
+      <p class="text-sm" style="opacity:0.9;margin-bottom:14px;">
+        Параметры будут применены только к этим документам и не сохранятся как шаблон.
+      </p>
+      <button type="submit" class="btn btn-light" style="background:white;color:var(--togu-primary);">
+        ⚡ Выпустить выбранным
+      </button>
+    </div>
+    {% endif %}
+  </form>
+</main>
+
+<script>
+  const checkAll = document.getElementById('check-all');
+  if (checkAll) {
+    checkAll.addEventListener('change', e => {
+      document.querySelectorAll('.row-check').forEach(c => c.checked = e.target.checked);
+    });
+  }
+</script>
+{% endblock %}

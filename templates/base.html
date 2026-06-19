@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ТОГУ — Платформа наградных документов{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+{% if current_user %}
+<nav class="top-nav">
+  <div class="container">
+    <a href="{{ url_for('dashboard') }}" class="brand-mark">
+      <div class="brand-text">
+        ТОГУ<br>
+        <small>Наградные документы</small>
+      </div>
+    </a>
+
+    <div class="nav-links">
+      <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' else '' }}">Главная</a>
+      {% if current_user.role in ['superadmin', 'admin', 'reviewer', 'auditor'] %}
+        <a href="{{ url_for('events_list') }}" class="{{ 'active' if request.endpoint in ['events_list', 'event_new', 'event_detail'] else '' }}">Мероприятия</a>
+      {% endif %}
+      {% if current_user.role in ['superadmin', 'admin'] %}
+        <a href="{{ url_for('templates_list') }}" class="{{ 'active' if 'template' in request.endpoint else '' }}">Шаблоны</a>
+      {% endif %}
+      {% if current_user.role == 'superadmin' %}
+        <a href="{{ url_for('users_list') }}" class="{{ 'active' if request.endpoint == 'users_list' else '' }}">Пользователи</a>
+      {% endif %}
+      {% if current_user.role in ['superadmin', 'auditor'] %}
+        <a href="{{ url_for('audit_log') }}" class="{{ 'active' if request.endpoint == 'audit_log' else '' }}">Журнал</a>
+      {% endif %}
+    </div>
+
+    <div class="user-menu">
+      <div>
+        <span class="user-name">{{ current_user.full_name }}</span>
+        <span class="user-role">{{ ROLES[current_user.role] }}</span>
+      </div>
+      <a href="{{ url_for('logout') }}" class="btn-logout">Выйти</a>
+    </div>
+  </div>
+</nav>
+{% endif %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<script>
+  // Авто-скрытие flash через 4 сек
+  setTimeout(() => {
+    document.querySelectorAll('.flash').forEach(f => {
+      f.style.transition = 'opacity .4s, transform .4s';
+      f.style.opacity = '0';
+      f.style.transform = 'translateX(20px)';
+      setTimeout(() => f.remove(), 400);
+    });
+  }, 4000);
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

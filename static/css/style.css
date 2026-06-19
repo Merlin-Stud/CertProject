@@ -1,0 +1,623 @@
+/* =================================================================
+   ТОГУ — Корпоративный стиль платформы наградных документов
+   Соответствие брендбуку: Тихоокеанский государственный университет
+   ================================================================= */
+
+/* --- Фирменные шрифты --- */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Russo+One&display=swap');
+
+/* --- Фирменная палитра (раздел 2 брендбука) --- */
+:root {
+  --togu-primary: #9B2242;        /* Pantone 7420 C — основной бордовый */
+  --togu-primary-dark: #7a1a35;
+  --togu-primary-light: #b73655;
+  --togu-white: #ffffff;
+  --togu-bg: #faf7f8;
+  --togu-text: #1a1a1a;
+  --togu-text-muted: #6b6b6b;
+  --togu-border: #e5dcde;
+  --togu-success: #007041;        /* Политех зелёный */
+  --togu-warning: #FFD72C;        /* ИАСиД жёлтый */
+  --togu-error: #C7452A;          /* ЮИ оранжевый */
+
+  /* Институты */
+  --inst-iasid: #FFD72C;
+  --inst-ilmk: #743A8E;
+  --inst-isptik: #B26694;
+  --inst-ieu: #175296;
+  --inst-pedinst: #8FAD15;
+  --inst-polytech: #007041;
+  --inst-ui: #C7452A;
+
+  --font-display: 'Russo One', sans-serif;
+  --font-body: 'Manrope', sans-serif;
+
+  --radius: 4px;
+  --radius-lg: 10px;
+  --shadow-sm: 0 1px 3px rgba(155, 34, 66, 0.08);
+  --shadow-md: 0 4px 16px rgba(155, 34, 66, 0.12);
+  --shadow-lg: 0 12px 40px rgba(155, 34, 66, 0.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--togu-text);
+  background: var(--togu-bg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--togu-primary); text-decoration: none; transition: color .15s; }
+a:hover { color: var(--togu-primary-dark); }
+
+/* =================================================================
+   Шапка (header)
+   ================================================================= */
+.top-nav {
+  background: var(--togu-primary);
+  color: var(--togu-white);
+  padding: 14px 0;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.top-nav .container {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  text-decoration: none;
+}
+.brand-mark .brand-text {
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 1.15;
+  letter-spacing: 0.3px;
+}
+.brand-mark .brand-text small {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  margin-left: 16px;
+  flex: 1;
+}
+.nav-links a {
+  color: white;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  font-weight: 500;
+  font-size: 14px;
+  opacity: 0.9;
+  transition: all .15s;
+}
+.nav-links a:hover, .nav-links a.active {
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 1;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.user-menu .user-name { font-weight: 600; }
+.user-menu .user-role {
+  font-size: 11px;
+  opacity: 0.75;
+  display: block;
+  margin-top: 1px;
+}
+.btn-logout {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+.btn-logout:hover { background: rgba(255, 255, 255, 0.25); color: white; }
+
+/* =================================================================
+   Контейнеры
+   ================================================================= */
+main.container {
+  max-width: 1280px;
+  margin: 32px auto;
+  padding: 0 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--togu-primary);
+  letter-spacing: 0.5px;
+}
+.page-header .subtitle {
+  color: var(--togu-text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* =================================================================
+   Карточки
+   ================================================================= */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--togu-border);
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--togu-primary);
+}
+.card-header h2, .card-header h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--togu-primary);
+  letter-spacing: 0.3px;
+}
+
+/* Сетка статистик */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: white;
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--togu-primary);
+  box-shadow: var(--shadow-sm);
+}
+.stat-card .stat-label {
+  font-size: 12px;
+  color: var(--togu-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+}
+.stat-card .stat-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  color: var(--togu-primary);
+  margin-top: 6px;
+}
+
+/* =================================================================
+   Кнопки
+   ================================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all .15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--togu-primary);
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--togu-primary-dark);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.btn-secondary {
+  background: white;
+  color: var(--togu-primary);
+  border-color: var(--togu-primary);
+}
+.btn-secondary:hover {
+  background: var(--togu-primary);
+  color: white;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--togu-text-muted);
+  border-color: var(--togu-border);
+}
+.btn-ghost:hover { color: var(--togu-primary); border-color: var(--togu-primary); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-block { width: 100%; }
+
+/* =================================================================
+   Формы
+   ================================================================= */
+.form-row { margin-bottom: 18px; }
+.form-row label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--togu-text);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.form-row input,
+.form-row textarea,
+.form-row select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--togu-border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 14px;
+  background: white;
+  transition: border-color .15s;
+}
+.form-row input:focus,
+.form-row textarea:focus,
+.form-row select:focus {
+  outline: none;
+  border-color: var(--togu-primary);
+}
+.form-row textarea { resize: vertical; min-height: 90px; }
+.form-row .hint {
+  font-size: 12px;
+  color: var(--togu-text-muted);
+  margin-top: 4px;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 720px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.checkbox-row input[type=checkbox] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--togu-primary);
+}
+
+/* =================================================================
+   Таблицы
+   ================================================================= */
+.table-wrap {
+  overflow-x: auto;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+table.data thead th {
+  background: var(--togu-primary);
+  color: white;
+  text-align: left;
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+table.data tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--togu-border);
+  vertical-align: middle;
+}
+table.data tbody tr:last-child td { border-bottom: none; }
+table.data tbody tr:hover { background: rgba(155, 34, 66, 0.03); }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-primary { background: var(--togu-primary); color: white; }
+.badge-success { background: #007041; color: white; }
+.badge-warning { background: #FFD72C; color: #4d3f00; }
+.badge-muted { background: #ececec; color: #555; }
+
+/* =================================================================
+   Flash сообщения
+   ================================================================= */
+.flash-container {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 200;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.flash {
+  background: white;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  border-left: 4px solid var(--togu-primary);
+  font-size: 14px;
+  animation: slideIn .25s ease;
+}
+.flash.success { border-left-color: #007041; }
+.flash.error { border-left-color: #C7452A; }
+.flash.warning { border-left-color: #FFD72C; }
+
+@keyframes slideIn {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* =================================================================
+   Лендинг
+   ================================================================= */
+.hero {
+  background: var(--togu-primary);
+  color: white;
+  padding: 80px 0 120px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' transform='rotate(-25 40 40)'%3E%3Crect x='10' y='10' width='35' height='6'/%3E%3Crect x='10' y='20' width='6' height='14'/%3E%3Crect x='25' y='20' width='6' height='10'/%3E%3Crect x='10' y='38' width='25' height='6'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.6;
+}
+.hero .container { position: relative; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 1.05;
+  letter-spacing: 0.5px;
+  max-width: 800px;
+}
+.hero .tagline {
+  font-size: 18px;
+  opacity: 0.92;
+  margin-top: 20px;
+  max-width: 640px;
+  line-height: 1.5;
+}
+.hero .cta-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+.hero .btn-light {
+  background: white;
+  color: var(--togu-primary);
+}
+.hero .btn-outline {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+.hero .btn-outline:hover { background: white; color: var(--togu-primary); }
+
+.features {
+  max-width: 1100px;
+  margin: -60px auto 60px;
+  padding: 0 24px;
+  position: relative;
+  z-index: 5;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+.feature-card {
+  background: white;
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border-top: 4px solid var(--togu-primary);
+}
+.feature-card h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--togu-primary);
+  margin-bottom: 10px;
+}
+.feature-card p { font-size: 14px; color: var(--togu-text-muted); line-height: 1.55; }
+
+/* =================================================================
+   Логин
+   ================================================================= */
+.login-wrap {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.login-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+  border-top: 6px solid var(--togu-primary);
+}
+.login-card .logo-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--togu-border);
+}
+.login-card h1 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--togu-primary);
+  margin-bottom: 8px;
+  line-height: 1.15;
+}
+.login-card .demo-creds {
+  background: #fdf5f7;
+  padding: 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--togu-text-muted);
+  margin-top: 18px;
+  border-left: 3px solid var(--togu-primary);
+  line-height: 1.7;
+}
+
+/* =================================================================
+   Верификация (QR)
+   ================================================================= */
+.verify-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #fdf5f7 0%, var(--togu-bg) 100%);
+}
+.verify-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.verify-status {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: white;
+}
+.verify-status.ok { background: #007041; }
+.verify-status.fail { background: #C7452A; }
+.verify-card h1 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--togu-primary);
+  margin-bottom: 20px;
+}
+.verify-info { text-align: left; margin-top: 24px; }
+.verify-info dt {
+  font-size: 11px;
+  color: var(--togu-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 16px;
+}
+.verify-info dd {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 2px;
+  color: var(--togu-text);
+}
+
+/* Тёмная тема для проверки (по ТЗ) */
+.verify-wrap.dark { background: #1a1014; }
+.verify-wrap.dark .verify-card { background: #2a1b21; color: white; }
+.verify-wrap.dark .verify-card h1 { color: #ffb3c1; }
+
+/* =================================================================
+   Утилиты
+   ================================================================= */
+.flex { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-16 { margin-bottom: 16px; }
+.text-muted { color: var(--togu-text-muted); }
+.text-sm { font-size: 13px; }
+.text-xs { font-size: 12px; }
+.text-mono { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12px; }
+
+/* Цветные плашки институтов */
+.inst-color {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-right: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Empty state */
+.empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--togu-text-muted);
+  font-size: 14px;
+}
+.empty .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }

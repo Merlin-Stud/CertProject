@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Новое мероприятие — ТОГУ{% endblock %}
+
+{% block content %}
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>{% if event %}РЕДАКТИРОВАНИЕ{% else %}НОВОЕ МЕРОПРИЯТИЕ{% endif %}</h1>
+      <div class="subtitle">Заполните основные сведения о мероприятии</div>
+    </div>
+    <a href="{{ url_for('events_list') }}" class="btn btn-ghost">← Назад</a>
+  </div>
+
+  <div class="card" style="max-width: 760px;">
+    <form method="post">
+      <div class="form-row">
+        <label>Название мероприятия *</label>
+        <input type="text" name="name" required value="{{ event.name if event else '' }}">
+      </div>
+
+      <div class="form-row">
+        <label>Организатор</label>
+        <input type="text" name="organizer" value="{{ event.organizer if event else 'Тихоокеанский государственный университет' }}">
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-row">
+          <label>Дата начала</label>
+          <input type="date" name="date_start" value="{{ event.date_start if event else '' }}">
+        </div>
+        <div class="form-row">
+          <label>Дата окончания</label>
+          <input type="date" name="date_end" value="{{ event.date_end if event else '' }}">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Тип мероприятия</label>
+        <select name="event_type">
+          <option value="конференция">Конференция</option>
+          <option value="олимпиада">Олимпиада</option>
+          <option value="форум">Форум</option>
+          <option value="курс">Образовательный курс</option>
+          <option value="конкурс">Конкурс</option>
+          <option value="иное">Иное</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Описание</label>
+        <textarea name="description" rows="3">{{ event.description if event else '' }}</textarea>
+      </div>
+
+      <div class="form-row">
+        <label>Контактные данные</label>
+        <input type="text" name="contact" placeholder="e-mail, телефон" value="{{ event.contact if event else '' }}">
+      </div>
+
+      <div class="flex gap-12 mt-24">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ url_for('events_list') }}" class="btn btn-ghost">Отмена</a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

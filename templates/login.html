@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Вход — ТОГУ{% endblock %}
+
+{% block content %}
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="logo-block">
+      <div>
+        <h1>ВХОД В СИСТЕМУ</h1>
+        <div class="text-muted text-sm">Тихоокеанский государственный университет</div>
+      </div>
+    </div>
+
+    <form method="post">
+      <div class="form-row">
+        <label>E-mail</label>
+        <input type="email" name="email" required autofocus placeholder="user@pnu.edu.ru">
+      </div>
+      <div class="form-row">
+        <label>Пароль</label>
+        <input type="password" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Войти</button>
+    </form>
+
+    <div class="demo-creds">
+      <strong>Демо-доступ:</strong><br>
+      admin@pnu.edu.ru / admin123 — суперадмин<br>
+      iasid@pnu.edu.ru / demo123 — админ ИАСиД<br>
+      student@pnu.edu.ru / demo123 — получатель
+    </div>
+  </div>
+</div>
+{% endblock %}

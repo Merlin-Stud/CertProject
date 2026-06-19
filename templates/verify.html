@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Проверка подлинности — ТОГУ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="verify-wrap" id="vw">
+  <div class="verify-card">
+    <button id="theme-toggle" style="position:absolute;top:12px;right:12px;background:transparent;border:1px solid var(--togu-border);border-radius:50%;width:32px;height:32px;cursor:pointer;" title="Переключить тему">🌓</button>
+
+    <div style="font-family:var(--font-display);font-size:18px;color:#9B2242;margin-bottom:12px;letter-spacing:0.5px;">
+      ТОГУ
+    </div>
+
+    {% if doc %}
+      <div class="verify-status ok">✓</div>
+      <h1>ДОКУМЕНТ ПОДЛИННЫЙ</h1>
+      <p class="text-muted text-sm">Документ выдан Тихоокеанским государственным университетом</p>
+
+      <dl class="verify-info">
+        <dt>Номер документа</dt>
+        <dd class="text-mono">{{ doc.unique_number }}</dd>
+
+        <dt>Получатель</dt>
+        <dd>{{ doc.recipient_name }}</dd>
+
+        <dt>Мероприятие</dt>
+        <dd>{{ doc.event_name }}</dd>
+
+        <dt>Тип документа</dt>
+        <dd>{{ doc.template_name }}</dd>
+
+        <dt>Организатор</dt>
+        <dd>{{ doc.organizer or '—' }}</dd>
+
+        <dt>Дата выдачи</dt>
+        <dd>{{ doc.issued_at[:16] }}</dd>
+
+        <dt>Подписал (КЭП)</dt>
+        <dd>{{ doc.signed_by }}</dd>
+
+        <dt>Хэш подписи</dt>
+        <dd class="text-mono text-xs" style="word-break:break-all;">{{ doc.signature_hash[:48] }}…</dd>
+      </dl>
+    {% else %}
+      <div class="verify-status fail">✕</div>
+      <h1>ДОКУМЕНТ НЕ НАЙДЕН</h1>
+      <p class="text-muted">
+        Документ с указанным идентификатором отсутствует в реестре ТОГУ или ссылка некорректна.
+        Возможно, это подделка.
+      </p>
+    {% endif %}
+
+    <div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--togu-border);font-size:11px;color:var(--togu-text-muted);">
+      Тихоокеанский государственный университет · pnu.edu.ru
+    </div>
+  </div>
+</div>
+
+<script>
+  // Темная/светлая тема (требование ТЗ 5)
+  const btn = document.getElementById('theme-toggle');
+  const wrap = document.getElementById('vw');
+  const saved = localStorage.getItem('togu-verify-theme');
+  if (saved === 'dark') wrap.classList.add('dark');
+  btn.addEventListener('click', () => {
+    wrap.classList.toggle('dark');
+    localStorage.setItem('togu-verify-theme', wrap.classList.contains('dark') ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+Flask>=3.0.0
+Werkzeug>=3.0.0
+reportlab>=4.0.0
+qrcode[pil]>=7.4.2
+Pillow>=10.0.0
+pdfrw>=0.4

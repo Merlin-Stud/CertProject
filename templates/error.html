@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Ошибка {{ code }} — ТОГУ{% endblock %}
+
+{% block content %}
+<main class="container">
+  <div class="card" style="max-width:540px;margin:80px auto;text-align:center;">
+    <div style="font-family:var(--font-display);font-size:80px;color:var(--togu-primary);line-height:1;">{{ code }}</div>
+    <h2 style="margin-top:12px;color:var(--togu-text);">{{ msg }}</h2>
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-24" style="margin-top:24px;">На главную</a>
+  </div>
+</main>
+{% endblock %}

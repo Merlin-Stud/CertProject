@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Мероприятия — ТОГУ{% endblock %}
+
+{% block content %}
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>МЕРОПРИЯТИЯ</h1>
+      <div class="subtitle">Конференции, олимпиады, форумы, курсы, конкурсы</div>
+    </div>
+    {% if current_user.role in ['superadmin', 'admin'] %}
+      <a href="{{ url_for('event_new') }}" class="btn btn-primary">+ Создать мероприятие</a>
+    {% endif %}
+  </div>
+
+  {% if events %}
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>Организатор</th>
+            <th>Тип</th>
+            <th>Период</th>
+            <th>Участники</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in events %}
+          <tr>
+            <td><strong>{{ e.name }}</strong></td>
+            <td>{{ e.organizer or '—' }}</td>
+            <td><span class="badge badge-muted">{{ e.event_type or '—' }}</span></td>
+            <td class="text-sm text-muted">
+              {{ e.date_start or '—' }}
+              {% if e.date_end %}— {{ e.date_end }}{% endif %}
+            </td>
+            <td><span class="badge badge-primary">{{ e.recipient_count }}</span></td>
+            <td>
+              <a href="{{ url_for('event_detail', event_id=e.id) }}" class="btn btn-secondary btn-sm">Открыть</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="empty">
+        <div class="empty-icon">📅</div>
+        <div>Мероприятия отсутствуют</div>
+        {% if current_user.role in ['superadmin', 'admin'] %}
+          <a href="{{ url_for('event_new') }}" class="btn btn-primary mt-16">Создать первое</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</main>
+{% endblock %}

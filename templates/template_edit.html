@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Шаблон: {{ tpl.name }} — ТОГУ{% endblock %}
+
+{% block content %}
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>РЕДАКТИРОВАНИЕ ШАБЛОНА</h1>
+      <div class="subtitle">{{ tpl.name }} · версия v{{ tpl.version }}</div>
+    </div>
+    <a href="{{ url_for('templates_list') }}" class="btn btn-ghost">← Назад</a>
+  </div>
+
+  {% set params = tpl.params_json|from_json if tpl.params_json else {} %}
+
+  <div class="card" style="max-width: 760px;">
+    <form method="post" enctype="multipart/form-data">
+      <div class="form-row">
+        <label>Название шаблона</label>
+        <input type="text" name="name" required value="{{ tpl.name }}">
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-row">
+          <label>Тип документа</label>
+          <select name="doc_type" required>
+            {% for code, label in DOC_TYPES.items() %}
+              <option value="{{ code }}" {% if code == tpl.doc_type %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Формат страницы</label>
+          <select name="page_size">
+            <option value="A4" {% if tpl.page_size == 'A4' %}selected{% endif %}>A4</option>
+            <option value="A5" {% if tpl.page_size == 'A5' %}selected{% endif %}>A5</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Ориентация</label>
+        <select name="orientation">
+          <option value="portrait" {% if tpl.orientation == 'portrait' %}selected{% endif %}>Книжная (вертикальная)</option>
+          <option value="landscape" {% if tpl.orientation == 'landscape' %}selected{% endif %}>Альбомная (горизонтальная)</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Фирменный цвет (палитра брендбука)</label>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          {% set palette = [
+            ('#9B2242', 'ТОГУ основной'),
+            ('#FFD72C', 'ИАСиД'),
+            ('#743A8E', 'ИЛМК'),
+            ('#B26694', 'ИСПТиК'),
+            ('#175296', 'ИЭУ'),
+            ('#8FAD15', 'Пединститут'),
+            ('#007041', 'Политех'),
+            ('#C7452A', 'ЮИ'),
+          ] %}
+          {% for color, label in palette %}
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;border:2px solid {% if color == tpl.institute_color %}var(--togu-primary){% else %}var(--togu-border){% endif %};border-radius:4px;cursor:pointer;">
+              <input type="radio" name="institute_color" value="{{ color }}" {% if color == tpl.institute_color %}checked{% endif %} style="accent-color:var(--togu-primary);">
+              <span class="inst-color" style="background:{{ color }};width:18px;height:18px;"></span>
+              <span class="text-xs">{{ label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card" style="background:#fdf5f7;border:1px dashed var(--togu-primary);">
+        <strong style="color:var(--togu-primary);">📁 СОБСТВЕННЫЙ ФОН</strong>
+        {% if tpl.background_file %}
+          <div class="text-sm" style="margin:8px 0;">
+            ✓ Текущий фон: <code>{{ tpl.background_file }}</code>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" name="remove_background" id="rb">
+            <label for="rb" style="margin:0;text-transform:none;">Удалить текущий фон (вернуться к стандартному оформлению)</label>
+          </div>
+        {% else %}
+          <div class="text-sm text-muted" style="margin:8px 0;">
+            Фон не загружен — используется стандартное оформление по брендбуку.
+          </div>
+        {% endif %}
+        <div class="form-row" style="margin-top:8px;">
+          <label>Загрузить {% if tpl.background_file %}новый{% endif %} фон (PDF/PNG/JPG)</label>
+          <input type="file" name="background_file" accept=".pdf,.png,.jpg,.jpeg">
+        </div>
+      </div>
+
+      <div class="checkbox-row mt-16" style="margin-top:16px;">
+        <input type="checkbox" name="show_pattern" id="sp" {% if params.show_pattern %}checked{% endif %}>
+        <label for="sp" style="margin:0;text-transform:none;">Фирменный паттерн ТОГУ</label>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" name="show_qr" id="sq" {% if params.show_qr %}checked{% endif %}>
+        <label for="sq" style="margin:0;text-transform:none;">QR-код для проверки подлинности</label>
+      </div>
+
+      <div class="card" style="background:#faf7f8;margin-top:16px;">
+        <strong>🔒 Заблокировано брендбуком:</strong>
+        <ul style="margin-top:8px;font-size:13px;color:var(--togu-text-muted);">
+          <li>Шрифт заголовков: Russo One</li>
+          <li>Шрифт основного текста: Manrope</li>
+          <li>Логотип ТОГУ и охранное поле</li>
+          <li>Пропорции пиксельной сетки знака (21×17)</li>
+          <li>Цвет Pantone 7420 C как базовый</li>
+        </ul>
+      </div>
+
+      <div class="flex gap-12 mt-24">
+        <button type="submit" class="btn btn-primary">Сохранить (создаст v{{ tpl.version + 1 }})</button>
+        <a href="{{ url_for('templates_list') }}" class="btn btn-ghost">Отмена</a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

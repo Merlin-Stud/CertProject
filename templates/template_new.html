@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Новый шаблон — ТОГУ{% endblock %}
+
+{% block content %}
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>НОВЫЙ ШАБЛОН</h1>
+      <div class="subtitle">Создайте шаблон документа на базе брендбука или загрузите свой фон</div>
+    </div>
+    <a href="{{ url_for('templates_list') }}" class="btn btn-ghost">← Назад</a>
+  </div>
+
+  <div class="card" style="max-width: 760px;">
+    <form method="post" enctype="multipart/form-data">
+      <div class="form-row">
+        <label>Название шаблона *</label>
+        <input type="text" name="name" required placeholder="например: Диплом победителя ИАСиД">
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-row">
+          <label>Тип документа</label>
+          <select name="doc_type" required>
+            {% for code, label in DOC_TYPES.items() %}
+              <option value="{{ code }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Формат</label>
+          <select name="page_size">
+            <option value="A4">A4</option>
+            <option value="A5">A5</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Ориентация</label>
+        <select name="orientation">
+          <option value="portrait">Книжная (вертикальная)</option>
+          <option value="landscape">Альбомная (горизонтальная)</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Фирменный цвет (палитра брендбука)</label>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          {% set palette = [
+            ('#9B2242', 'ТОГУ основной'),
+            ('#FFD72C', 'ИАСиД'),
+            ('#743A8E', 'ИЛМК'),
+            ('#B26694', 'ИСПТиК'),
+            ('#175296', 'ИЭУ'),
+            ('#8FAD15', 'Пединститут'),
+            ('#007041', 'Политех'),
+            ('#C7452A', 'ЮИ'),
+          ] %}
+          {% for color, label in palette %}
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;border:2px solid var(--togu-border);border-radius:4px;cursor:pointer;">
+              <input type="radio" name="institute_color" value="{{ color }}" {% if loop.first %}checked{% endif %} style="accent-color:var(--togu-primary);">
+              <span class="inst-color" style="background:{{ color }};width:18px;height:18px;"></span>
+              <span class="text-xs">{{ label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card" style="background:#fdf5f7;border:1px dashed var(--togu-primary);">
+        <strong style="color:var(--togu-primary);">📁 СОБСТВЕННЫЙ ФОН (опционально)</strong>
+        <div class="text-sm text-muted" style="margin:8px 0;">
+          Загрузите PDF или PNG/JPG с уже нарисованным дизайном.
+          Платформа добавит сверху: имя получателя, название мероприятия, QR-код и уникальный номер.<br>
+          Если фон не загружен — будет использовано стандартное оформление ТОГУ по брендбуку.
+        </div>
+        <div class="form-row">
+          <label>Файл фона (PDF, PNG, JPG)</label>
+          <input type="file" name="background_file" accept=".pdf,.png,.jpg,.jpeg">
+          <div class="hint">Размер должен соответствовать выбранному формату страницы.</div>
+        </div>
+      </div>
+
+      <div class="checkbox-row mt-16" style="margin-top:16px;">
+        <input type="checkbox" name="show_qr" id="sq" checked>
+        <label for="sq" style="margin:0;text-transform:none;">QR-код для проверки подлинности</label>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" name="show_pattern" id="sp" checked>
+        <label for="sp" style="margin:0;text-transform:none;">Фирменный паттерн ТОГУ (только при стандартном оформлении)</label>
+      </div>
+
+      <div class="flex gap-12 mt-24">
+        <button type="submit" class="btn btn-primary">Создать шаблон</button>
+        <a href="{{ url_for('templates_list') }}" class="btn btn-ghost">Отмена</a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

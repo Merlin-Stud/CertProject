@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Главная — ТОГУ{% endblock %}
+
+{% block content %}
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>ГЛАВНАЯ ПАНЕЛЬ</h1>
+      <div class="subtitle">{{ ROLES[user.role] }}{% if user.department %} · {{ user.department }}{% endif %}</div>
+    </div>
+    {% if user.role in ['superadmin', 'admin'] %}
+      <a href="{{ url_for('event_new') }}" class="btn btn-primary">+ Новое мероприятие</a>
+    {% endif %}
+  </div>
+
+  {% if user.role in ['superadmin', 'admin'] %}
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Мероприятия</div>
+      <div class="stat-value">{{ stats.events }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Документы выдано</div>
+      <div class="stat-value">{{ stats.documents }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Получатели</div>
+      <div class="stat-value">{{ stats.recipients }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Шаблоны</div>
+      <div class="stat-value">{{ stats.templates }}</div>
+    </div>
+  </div>
+  {% elif user.role == 'recipient' %}
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Мои документы</div>
+      <div class="stat-value">{{ stats.my_documents }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-header">
+      <h2>{% if user.role == 'recipient' %}Мои документы{% else %}Последние документы{% endif %}</h2>
+    </div>
+
+    {% if recent_docs %}
+      <div class="table-wrap" style="box-shadow: none;">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>№ документа</th>
+              <th>Получатель</th>
+              <th>Мероприятие</th>
+              <th>Тип</th>
+              <th>Дата</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in recent_docs %}
+            <tr>
+              <td class="text-mono">{{ d.unique_number }}</td>
+              <td><strong>{{ d.rname }}</strong></td>
+              <td>{{ d.ename }}</td>
+              <td><span class="badge badge-primary">{{ DOC_TYPES.get(d.doc_type, d.doc_type) }}</span></td>
+              <td class="text-sm text-muted">{{ d.issued_at[:10] }}</td>
+              <td>
+                <a href="{{ url_for('document_preview', doc_id=d.id) }}" class="btn btn-ghost btn-sm" target="_blank">Открыть</a>
+                <a href="{{ url_for('document_download', doc_id=d.id) }}" class="btn btn-primary btn-sm">PDF</a>
+                <a href="{{ url_for('verify', token=d.access_token) }}" class="btn btn-secondary btn-sm" target="_blank">Проверка</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty">
+        <div class="empty-icon">📄</div>
+        <div>Документы ещё не выпущены</div>
+      </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}
